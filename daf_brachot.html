@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דף ברכות</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@112.5,300..700&family=M+PLUS+1p&family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('path_to_your_font_file.woff2') format('woff2'),
+                 url('path_to_your_font_file.woff') format('woff');
+        }
+        body {
+            font-family: 'Fredoka', 'M PLUS 1p', sans-serif;
+            background-color: #FAF4E4; /* רקע צהבהב מותאם */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .board {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 20px; /* מרווחים בין הפתקים */
+            overflow-y: auto;
+            position: relative;
+        }
+        .sticky-note {
+            width: 150px;
+            min-height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-family: 'M PLUS Rounded 1c', sans-serif; /* פונט לברכות */
+            font-size: 16px; /* הגדלת טקסט ברכה */
+            position: relative;
+        }
+        .sticky-note .name {
+            font-size: 14px; /* הגדלת שם השולח */
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .form {
+            background-color: #FAF4E4; /* רקע מותאם */
+            padding: 20px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-family: 'Fredoka', 'M PLUS 1p', sans-serif;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+        }
+        .form label {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+        .form input[type="text"], .form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .colors {
+            display: flex;
+            gap: 10px;
+        }
+        .color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color.selected {
+            border: 2px solid #000;
+        }
+        .color.red { background-color: #E78F81; }
+        .color.orange { background-color: #FFCFB3; }
+        .color.yellow { background-color: #FFF5CD; }
+        .color.blue { background-color: #B7E0FF; }
+        .form button {
+            padding: 10px;
+            background-color: #257180;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form button:hover {
+            background-color: #1b5a63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="board" id="board">
+            <!-- פתקים יתווספו לכאן -->
+        </div>
+        <div class="form">
+            <label for="name">מה השם שלכם?</label>
+            <input type="text" id="name" placeholder="הכנס את שמך" maxlength="50">
+
+            <label for="message">שתפו אותנו במילים חמות:</label>
+            <textarea id="message" rows="3" placeholder="כתוב את הברכה שלך כאן..." maxlength="150"></textarea>
+
+            <label for="privacy">האם תרצו לשתף את הברכה שלכם עם העולם או לשלוח לבעלי האירוע בפרטי?</label>
+            <select id="privacy">
+                <option value="public">לשתף עם העולם</option>
+                <option value="private">באופן פרטי</option>
+            </select>
+
+            <label>בחר צבע פתק:</label>
+            <div class="colors">
+                <div class="color red" data-color="#E78F81"></div>
+                <div class="color orange" data-color="#FFCFB3"></div>
+                <div class="color yellow" data-color="#FFF5CD"></div>
+                <div class="color blue" data-color="#B7E0FF"></div>
+            </div>
+
+            <button id="send">שלח</button>
+        </div>
+    </div>
+    <script>
+        const board = document.getElementById('board');
+        const colors = document.querySelectorAll('.color');
+        let selectedColor = '#FFF5CD';
+
+        colors.forEach(color => {
+            color.addEventListener('click', () => {
+                colors.forEach(c => c.classList.remove('selected'));
+                color.classList.add('selected');
+                selectedColor = color.getAttribute('data-color');
+            });
+        });
+
+        document.getElementById('send').addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+            const privacy = document.getElementById('privacy').value;
+
+            if (privacy === 'public') {
+                const note = document.createElement('div');
+                note.classList.add('sticky-note');
+                note.style.backgroundColor = selectedColor;
+
+                // Adjust text color for better readability
+                if (selectedColor === '#B7E0FF') {
+                    note.style.color = '#000';
+                } else {
+                    note.style.color = '#333';
+                }
+
+                note.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+                note.style.position = 'relative';
+                note.innerHTML = `<div>${message}</div><div class="name">- ${name}</div>`;
+                board.appendChild(note);
+            } else {
+                alert(`הברכה נשלחה באופן פרטי: \nשם: ${name}\nברכה: ${message}`);
+            }
+
+            // Reset form
+            document.getElementById('name').value = '';
+            document.getElementById('message').value = '';
+            document.getElementById('privacy').value = 'public';
+            colors.forEach(c => c.classList.remove('selected'));
+        });
+   
+   </script>
+   
+</body>
+</html>
